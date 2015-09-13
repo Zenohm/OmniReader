@@ -1,3 +1,12 @@
+import ftfy
+import PyPDF2
+import unidecode
+from bs4 import BeautifulSoup
+from urllib.request import urlopen
+
+from __main__ import speech_system
+
+
 class getStory:
     """
     This class handles the retrieval and classification

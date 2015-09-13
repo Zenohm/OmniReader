@@ -1,3 +1,11 @@
+import os
+import sys
+from gtts import gTTS
+from importlib import import_module
+from subprocess import call
+home = os.path.expanduser("~")
+
+
 def import_or_install(module, package, description, capability):
     """Import module. If it fails to import, prompt user to install
     package and try again. The description argument gives a brief
