@@ -69,6 +69,9 @@ class getStory:
             self.backup = self.url
             map_class = [getStory(each_url) for each_url in self.url]
             self.url = map_class
+    
+    def __repr__(self):
+        return "Story({})".format(self.url)
 
     def __bool__(self):
         return self.initialized
