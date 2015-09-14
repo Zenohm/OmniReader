@@ -8,21 +8,10 @@ import sys
 sys.path.append(os.getcwd())
 import time
 import webbrowser
-from textwrap import fill
 from utility_functions import say
 from utility_functions import import_or_install
 from platform import python_version
 
-global speech_system
-speech_system = 'google'
-from OmniReader import OmniReader
-
-
-if '2.' == python_version()[:1]:
-    print("This program requires Python 3 in order to properly function.\n"
-          "A backwards compatible version may be available in the future.")
-    input("End of line.")
-    sys.exit()
 
 import_or_install('gtts', 'gTTS', 'Google Text to Speech API',
                   'sound natural')
@@ -38,6 +27,17 @@ import_or_install('ftfy', 'ftfy', 'the smart Python unicode fixer',
 
 import_or_install('unidecode', 'unidecode', 'the last resort unicode parser',
                   'will likely crash if it finds a special character.')
+
+global speech_system
+speech_system = 'google'
+from OmniReader import OmniReader
+
+
+if '2' == python_version()[0]:
+    print("This program requires Python 3 in order to properly function.\n"
+          "A backwards compatible version may be available in the future.")
+    input("End of line.")
+    sys.exit()
 
 def main():
     try:
