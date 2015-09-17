@@ -1,7 +1,10 @@
 from getStory import getStory
 from utility_functions import say, continue_question
 
-from __main__ import speech_system
+try:
+    from __main__ import speech_system
+except ImportError:
+    speech_system = 'google'
 
 
 def OmniReader(text, *, change_type=False):

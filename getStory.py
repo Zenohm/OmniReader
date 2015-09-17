@@ -4,7 +4,10 @@ import unidecode
 from bs4 import BeautifulSoup
 from urllib.request import urlopen
 
-from __main__ import speech_system
+try:
+    from __main__ import speech_system
+except ImportError:
+    speech_system = 'google'
 
 
 class getStory:
