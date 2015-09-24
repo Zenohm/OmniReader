@@ -49,7 +49,8 @@ class getStory:
         self.text = url
         self.chapters = []
         self.initialized = False
-        if not hasattr(self.url, '__iter__') or isinstance(self.url, str):
+        self.changes = {}
+        if not hasattr(self.url, '__iter__') or type(self.url) is str:
             if 'wattpad' in self.url:
                 self.type = 'wattpad'
             elif 'fanfiction' in self.url and 'wattpad' not in self.url:
@@ -148,15 +149,17 @@ class getStory:
             last_chapter = int(penultimate_chapter.split('"')[0]) + 1
             self.chapters = list(map(str, range(-1, last_chapter + 1)))
             self.initialized = True
-            # This code tries to get chapter names, doesn't always work
-            # options = soup.select('#chap_select')[0].option.text
-            # options_modified = options
-            # for char in range(len(options)):
-            #    if options[char].isdigit() and options[char + 1] == '.':
-            #        options_modified = options_modified.replace(
-            #            options[char], "~$~" + options[char]
-            #            )
-            # self.chapters = options_modified.split('~$~')[1:]
+            """
+             This code tries to get chapter names, doesn't always work
+             options = soup.select('#chap_select')[0].option.text
+             options_modified = options
+             for char in range(len(options)):
+                if options[char].isdigit() and options[char + 1] == '.':
+                    options_modified = options_modified.replace(
+                        options[char], "~$~" + options[char]
+                        )
+             self.chapters = options_modified.split('~$~')[1:]
+            """
         except Exception:
             print('Retrieval Failed.')
 
@@ -232,35 +235,23 @@ class getStory:
             self.text = str(text)
         # Removes newline and return characters
         changes = {
-            '\n': ' ',
-            '\r': ' ',
-            '"': "'",
-            '.': '. ',
+            '\n': ' ', '\r': ' ',
+            '"': "'", '.': '. ',
             '.   .   . ': '',
-            "\'": '',
-            '\"': '',
-            ':': ': ',
-            ':  ': ': ',
-            '!': '! ',
-            '!  ': '! ',
-            '?': '? ',
-            '?  ': '? ',
-            ';': '; ',
-            ';  ': '; ',
+            "\'": '', '\"': '',
+            ':': ': ', ':  ': ': ',
+            '!': '! ', '!  ': '! ',
+            '?': '? ', '?  ': '? ',
+            ';': '; ', ';  ': '; ',
             '. . .': '...',
-            '0': '0 ',
-            '1': '1 ',
-            '2': '2 ',
-            '3': '3 ',
-            '4': '4 ',
-            '5': '5 ',
-            '6': '6 ',
-            '7': '7 ',
-            '8': '8 ',
-            '9': '9 '
+            '0': '0 ', '1': '1 ',
+            '2': '2 ', '3': '3 ',
+            '4': '4 ', '5': '5 ',
+            '6': '6 ', '7': '7 ',
+            '8': '8 ', '9': '9 '
                   }
         if self.speech == 'local':
-            changes.update({
+            updates.update({
                        'Tali': 'Tahlie',
                        'tali': 'tahlie',
                        'Yalo': ' Yah-lo ',
@@ -272,10 +263,11 @@ class getStory:
                        'Vakarian': 'Vah-kare-eean'
                       })
         else:
-            changes.update({
+            updates.update({
                        'Tali': 'Tahhlee',
                        'tali': 'Tahhlee',
                        'caf ': 'cafe '
                       })
+        changes.update(updates)
         for original_word, changed_word in changes.items():
             self.text = self.text.replace(original_word, changed_word)
