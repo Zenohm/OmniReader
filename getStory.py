@@ -114,7 +114,8 @@ class getStory:
 
     def __len__(self):
         return len(self.text)
-
+    
+    @property
     def initialize(self):
         """
         Automatically detects and initializes the
@@ -122,17 +123,18 @@ class getStory:
         inputted.
         """
         if self.type == 'wattpad':
-            self.wattpad()
+            self.wattpad
         elif self.type == 'fanfiction':
-            self.fanfiction()
+            self.fanfiction
         elif self.type == 'deviantart':
-            self.deviantart()
+            self.deviantart
         elif self.type == 'pdf':
-            self.pdf_initialize()
+            self.pdf_initialize
         else:
             self.initialized = True
             pass
-
+    
+    @property
     def fanfiction(self):
         """
         Retrieves and parses text from a Fanfiction.net story.
@@ -163,6 +165,7 @@ class getStory:
         except Exception:
             print('Retrieval Failed.')
 
+    @property
     def deviantart(self):
         """
         Retrieves text from Deviantart stories.
@@ -178,6 +181,7 @@ class getStory:
         except Exception:
             print('Retrieval Failed.')
 
+    @property
     def wattpad(self, page=0, mode='singular'):
         """
         Retrieve text from Wattpad stories given a page
@@ -194,6 +198,7 @@ class getStory:
             self.text = soup.find_all(class_="panel panel-reading")
         self.initialized = True
 
+    @property
     def pdf_initialize(self):
         """
         Sets up the retrieval of text from a PDF,
@@ -218,6 +223,7 @@ class getStory:
         page = PyPDF2.PdfFileReader(self.url).getPage(page)
         self.text = page.extractText().replace('\u2122', "'")
 
+    @property
     def parse(self):
         """
         Removes all unicode characters, nonprintable characters,
