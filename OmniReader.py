@@ -42,7 +42,7 @@ def OmniReader(text, *, change_type=False):
                 story.wattpad(each_page, 'plural')[1]
             else:
                 # Meant for the first page because **** Wattpad
-                story.wattpad
+                story.wattpad()
             paragraphs = story.text.find_all('p')
             # Iterates through the paragraphs in each page of the story
             for each_paragraph in range(len(paragraphs)):
