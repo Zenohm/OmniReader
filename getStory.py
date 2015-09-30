@@ -123,7 +123,7 @@ class getStory:
         inputted.
         """
         if self.type == 'wattpad':
-            self.wattpad
+            self.wattpad()
         elif self.type == 'fanfiction':
             self.fanfiction
         elif self.type == 'deviantart':
