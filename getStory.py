@@ -185,7 +185,6 @@ class getStory:
         except Exception as E:
             print('Retrieval of Deviantart story failed: ' + str(E))
 
-    @property
     def wattpad(self, page=0, mode='singular'):
         """
         Retrieve text from Wattpad stories given a page
