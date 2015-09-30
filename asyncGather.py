@@ -8,7 +8,7 @@ async def fetch(url):
     url.initialize()
     await asyncio.sleep(1)
     full_text.append(url.text)
-    print("%s is fucking DONE bruh." % (url.url))
+    print("%s completed" % (url.url))
 
 loop = asyncio.get_event_loop()
 tasks = [asyncio.ensure_future(fetch(url)) for url in full_frontal_storytime]
