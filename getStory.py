@@ -144,6 +144,8 @@ class getStory:
         soup = BeautifulSoup(urlopen(str(self.url)))
         # Retrieve story text from the URL to be used elsewhere
         try:
+            # The following code knows a bit too much about the input
+            # Find better solution, this will likely break for edge cases
             self.text = soup.find(class_='storytext').text
             # Following code will grab the number of chapters for later use.
             options = str(soup.select('#chap_select')[0].option)
@@ -152,7 +154,9 @@ class getStory:
             self.chapters = list(map(str, range(-1, last_chapter + 1)))
             self.initialized = True
             """
-             This code tries to get chapter names, doesn't always work
+             # This code tries to get chapter names, but doesn't always work
+             # It remains to remind me what not to do.
+             # Meanwhile, chapters will be named after their number.
              options = soup.select('#chap_select')[0].option.text
              options_modified = options
              for char in range(len(options)):
@@ -162,8 +166,8 @@ class getStory:
                         )
              self.chapters = options_modified.split('~$~')[1:]
             """
-        except Exception:
-            print('Retrieval Failed.')
+        except Exception as E:
+            print('Retrieval of Fanfiction story failed: ' + str(E))
 
     @property
     def deviantart(self):
@@ -178,8 +182,8 @@ class getStory:
                                     ' div > div >'
                                     ' div')[0].text
             self.initialized = True
-        except Exception:
-            print('Retrieval Failed.')
+        except Exception as E:
+            print('Retrieval of Deviantart story failed: ' + str(E))
 
     @property
     def wattpad(self, page=0, mode='singular'):
@@ -204,22 +208,22 @@ class getStory:
         Sets up the retrieval of text from a PDF,
         whether stored online or locally.
         """
-        try:
-            os.remove(os.getcwd() + '\\PDF2BEREAD.pdf')
-        except FileNotFoundError:
-            pass
+        local_path = os.getcwd() + '\\PDF2BEREAD.pdf'
+        if os.path.isfile(local_path):
+            os.remove(local_path)
         if self.pathtype == 'url':
             # Download the PDF from the web
-            path = urlopen(self.url)
+            web_path = urlopen(self.url)
             with open('PDF2BEREAD.pdf', 'wb') as file:
-                file.write(path.read())
-            self.url = os.getcwd() + '\\PDF2BEREAD.pdf'
+                file.write(web_path.read())
+            self.url = local_path
         self.initialized = True
 
     def pdf(self, page):
         """
         Retrieves text from a PDF document, stored locally or online.
         """
+        # While this works it's a bit odd. More research required.
         page = PyPDF2.PdfFileReader(self.url).getPage(page)
         self.text = page.extractText().replace('\u2122', "'")
 
@@ -230,48 +234,44 @@ class getStory:
         and unneeded special characters.
         Also formats text for audio reading.
         """
-        try:
+        try: # Attempt to scrub the unicode with a library
             text = ftfy.fix_text(self.text)
             self.text = unidecode.unidecode(text).replace('[?]', '')
-        except Exception:
+        except Exception: # If that fails, kill it with fire.
             text = bytes(self.text, 'utf-8')
             text = text.decode('unicode_escape')
             text = text.encode('ascii', 'ignore')
             text = text.decode('utf-8')
             self.text = str(text)
-        # Removes newline and return characters
+        # Formats text to remove odd artifacts from the conversion
         changes = {
-            '\n': ' ', '\r': ' ',
-            '"': "'", '.': '. ',
-            '.   .   . ': '',
-            "\'": '', '\"': '',
-            ':': ': ', ':  ': ': ',
-            '!': '! ', '!  ': '! ',
-            '?': '? ', '?  ': '? ',
-            ';': '; ', ';  ': '; ',
-            '. . .': '...',
-            '0': '0 ', '1': '1 ',
-            '2': '2 ', '3': '3 ',
-            '4': '4 ', '5': '5 ',
-            '6': '6 ', '7': '7 ',
-            '8': '8 ', '9': '9 '
+            '\n': ' ',          '\r': ' ',
+            '"': "'",           '.': '. ',
+            '.   .   . ': '',   '. . .': '...',
+            "\'": '',           '\"': '',
+            ':': ': ',          ':  ': ': ',
+            '!': '! ',          '!  ': '! ',
+            '?': '? ',          '?  ': '? ',
+            ';': '; ',          ';  ': '; ',
+            '0': '0 ',          '1': '1 ',
+            '2': '2 ',          '3': '3 ',
+            '4': '4 ',          '5': '5 ',
+            '6': '6 ',          '7': '7 ',
+            '8': '8 ',          '9': '9 '
                   }
         if self.speech == 'local':
+            # The Microsoft SAPI pronunciation is a bit off
             updates.update({
-                       'Tali': 'Tahlie',
-                       'tali': 'tahlie',
-                       'Yalo': ' Yah-lo ',
-                       'caf ': 'cafe ',
-                       'Garrus': 'Gae-rrus',
-                       'Klenon': 'Klenn une',
-                       'Binary': 'Bi-nary',
-                       'Noveria': ' No-veir-eaah ',
+                       'Tali': 'Tahlie',     'tali': 'tahlie',
+                       'Yalo': ' Yah-lo ',   'caf ': 'cafe ',
+                       'Garrus': 'Gae-rrus', 'Klenon': 'Klenn une',
+                       'Binary': 'Bi-nary',  'Noveria': ' No-veir-eaah ',
                        'Vakarian': 'Vah-kare-eean'
                       })
         else:
+            # Google's TTS is better at its job :)
             updates.update({
-                       'Tali': 'Tahhlee',
-                       'tali': 'Tahhlee',
+                       'Tali': 'Tahhlee', 'tali': 'Tahhlee',
                        'caf ': 'cafe '
                       })
         changes.update(updates)
