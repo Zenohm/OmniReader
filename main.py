@@ -47,6 +47,8 @@ def main():
         try:
             say("Initializing...", speech_system=speech_system)
         except Exception:
+            # I'm leaving this here. It's a fun easter egg, something
+            # you don't expect to find when nothing works.
             webbrowser.open_new('https://www.youtube.com/watch?v=WlBiLNN1NhQ')
             raise HumorousError("Life's a piece of shit.")
     reading = True
