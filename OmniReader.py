@@ -50,7 +50,7 @@ def OmniReader(text, *, change_type=False):
                 # Get all the text segments
                 paragraphs[each_paragraph] = paragraphs[each_paragraph].text
             story.text = ' '.join(paragraphs)
-            story.parse()
+            story.parse
             print(story.text)
             say(story.text, speech_system=speech_system)
             return continue_question()
@@ -61,17 +61,17 @@ def OmniReader(text, *, change_type=False):
         and save the audio recording of each.
         """
         story.text = "No data available."
-        story.fanfiction()
+        story.fanfiction
         url = story.url.split('/')
         for each_chapter in range(int(url[-2]), int(story.chapters[-1]) + 1):
             url = story.url.split('/')
-            story.fanfiction()
+            story.fanfiction
             # Set up the name for each audio recording
             title = url[-1] + '_' + url[-2]
             if not os.path.exists(url[-1]):
                 os.makedirs(url[-1])
             print("Processing story text...")
-            story.parse()
+            story.parse
             print("Downloading audio file, " + title)
             if speech_system == 'local':
                 say(story.text,
@@ -94,7 +94,7 @@ def OmniReader(text, *, change_type=False):
         return continue_question('finished recording')
 
     elif story.type == 'pdf':
-        story.pdf_initialize()
+        story.pdf_initialize
         if sys.argv[0] and len(sys.argv) == 2:
             raise SyntaxError("Please input the beginning page.")
         elif sys.argv[0] and len(sys.argv) == 3:
@@ -108,23 +108,23 @@ def OmniReader(text, *, change_type=False):
                               ):
             story.pdf(each_page)
             print('\n \t \t' + str(each_page + 1) + '\n')
-            story.parse()
+            story.parse
             print(story.text)
             say(story.text, speech_system=speech_system)
         return continue_question()
 
     elif story.type == 'deviantart':
-        story.deviantart()
+        story.deviantart
         url = story.url.split('/')
         title = url[-1]
         print("Processing story text...")
-        story.parse()
+        story.parse
         print("Creating audio file.")
         say(story.text, title, speech_system)
         return continue_question('finished recording')
 
     elif story.type == 'text':
         print('\n' + story.text)
-        story.parse()
+        story.parse
         say(story.text, speech_system=speech_system)
         return continue_question('finished speaking', 'say something else')
