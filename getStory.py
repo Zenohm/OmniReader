@@ -138,7 +138,7 @@ class getStory:
         Will attempt to grab a chapter list.
         """
         # Opens and parses the URL with BeautifulSoup
-        soup = BeautifulSoup(urlopen(str(self.url)))
+        soup = BeautifulSoup(urlopen(str(self.url)), "html.parser")
         # Retrieve story text from the URL to be used elsewhere
         try:
             self.text = soup.find(class_='storytext').text
@@ -165,7 +165,7 @@ class getStory:
         Retrieves text from Deviantart stories.
         """
         try:
-            soup = BeautifulSoup(urlopen(str(self.url)))
+            soup = BeautifulSoup(urlopen(str(self.url)), "html.parser")
             self.text = soup.select('#devskin >'
                                     ' div > div >'
                                     ' div.gr-body >'
@@ -183,7 +183,7 @@ class getStory:
         """
         # Sets up the page variable to be added onto the URL
         page = '/page/' + str(page) if page else ''
-        soup = BeautifulSoup(urlopen(str(self.url + page)))
+        soup = BeautifulSoup(urlopen(str(self.url + page)), "html.parser")
         # Finds the path and contents given by the search
         if mode == 'singular':
             self.text = soup.find(class_="panel panel-reading")
