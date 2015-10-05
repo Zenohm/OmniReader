@@ -1,3 +1,4 @@
+import os
 __author__ = "Isaac Smith (Zenohm)"
 __email__ = 'sentherus@gmail.com'
 __copyright__ = '2015 sentherus@gmail.com'
