@@ -7,8 +7,7 @@ import translate
 gs = translate.Goslate()
 
 try:
-    from __init__ import speech_system
-    from __init__ import language
+    from __init__ import speech_system, language
 except ImportError:
     speech_system = 'google'
     language = 'en'
