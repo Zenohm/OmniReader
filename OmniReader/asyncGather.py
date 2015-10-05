@@ -1,5 +1,4 @@
-<<<<<<< HEAD
-import async
+import asyncio
 
 def afetch(stories):
     full_text = []
@@ -14,7 +13,8 @@ def afetch(stories):
     tasks = [asyncio.ensure_future(fetch(url)) for url in stories]
     loop.run_until_complete(asyncio.wait(tasks))
     return full_text
-=======
+
+"""
 import asyncio
 
 full_text = []
@@ -30,4 +30,4 @@ async def fetch(url):
 loop = asyncio.get_event_loop()
 tasks = [asyncio.ensure_future(fetch(url)) for url in full_frontal_storytime]
 loop.run_until_complete(asyncio.wait(tasks))
->>>>>>> origin/master
+"""

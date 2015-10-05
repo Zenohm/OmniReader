@@ -1,9 +1,10 @@
 from getStory import getStory
 from utility_functions import say, continue_question
 import os
+import sys
 
 try:
-    from __main__ import speech_system
+    from __init__ import speech_system
 except ImportError:
     speech_system = 'google'
 

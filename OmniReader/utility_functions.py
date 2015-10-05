@@ -39,32 +39,33 @@ def continue_question(intro_text='reached the end',
 
 def say(message, title='Speak', speech_system='google', say=True):
     if speech_system == 'google':
-        try:
-            # Create the MP3 file which will speak the text
-            title += '.mp3'
-            tts = gTTS(message)
-            tts.save(home+'\\'+title)
-            if say:
-                call("start /MIN {}".format(home+'\\'+title), shell=True)
-        except Exception:
-            print("Vocalization failed.")
+        # Create the MP3 file which will speak the text
+        folder = ''
+        if '\\' in title:
+            folder = '\\'.join(title.split('\\')[:-1])
+        title += '.mp3'
+        tts = gTTS(message)
+        path = home+'\\'+title
+        folder_path = home + "\\" + folder
+        if not os.path.exists(folder_path):
+            os.makedirs(folder_path)
+        tts.save(path)
+        if say:
+            call("start /MIN {}".format(home+'\\'+title), shell=True)
     else:
-        try:
-            # Create the Visual Basic code which will speak the text
-            with open(title + '.vbs', 'w') as file:
-                file.write(
-                        """
-                        speaks="{}"
-                        Dim speaks, speech
-                        Set speech=CreateObject("sapi.spvoice")
-                        speech.Speak speaks
-                        """
-                        .format(
-                            str(message).replace('"', '').replace('\n', '')))
-            # Execute the file
-            call(['cscript.exe', title + '.vbs'])
-        except Exception:
-            print("Vocalization failed.")
+        # Create the Visual Basic code which will speak the text
+        with open(title + '.vbs', 'w') as file:
+            file.write(
+                    """
+                    speaks="{}"
+                    Dim speaks, speech
+                    Set speech=CreateObject("sapi.spvoice")
+                    speech.Speak speaks
+                    """
+                    .format(
+                        str(message).replace('"', '').replace('\n', '')))
+        # Execute the file
+        call(['cscript.exe', title + '.vbs'])
 
 
 class HumorousError(Exception):

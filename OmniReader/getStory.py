@@ -3,11 +3,15 @@ import PyPDF2
 import unidecode
 from bs4 import BeautifulSoup
 from urllib.request import urlopen
+import translate
+gs = translate.Goslate()
 
 try:
-    from __main__ import speech_system
+    from __init__ import speech_system
+    from __init__ import language
 except ImportError:
     speech_system = 'google'
+    language = 'en'
 
 
 class getStory:
@@ -30,6 +34,8 @@ class getStory:
             google: Google text to speech engine
         text: Initially equal to url, set to story text after
                 initialization is performed.
+        changes: A dictionary listing changes that should be 
+                    made to the text before it is spoken.
         chapters: On fanfiction, holds a list of chapters
         initialized: Whether the story has retrieved its text
         type: What is the input, where does it lead?
@@ -50,6 +56,7 @@ class getStory:
         self.chapters = []
         self.initialized = False
         self.changes = {}
+        self.language = "Unknown"
         if not hasattr(self.url, '__iter__') or type(self.url) is str:
             if 'wattpad' in self.url:
                 self.type = 'wattpad'
@@ -133,6 +140,16 @@ class getStory:
         else:
             self.initialized = True
             pass
+        self.language = gs.detect(self.text)
+    
+    def translate(self, target='en'):
+        if self.initialized:
+            self.source_language = gs.get_languages()[self.language]
+            self.target_language = gs.get_languages()[target]
+            print("Translating from {0} to {1}.".format(self.source_language, self.target_language))
+            self.text = gs.translate(self.text, target)
+        else:
+            print("Please initialize.")
     
     @property
     def fanfiction(self):
@@ -146,12 +163,18 @@ class getStory:
         try:
             # The following code knows a bit too much about the input
             # Find better solution, this will likely break for edge cases
+            # Or not. This now works for edge cases. - 10/4/2015 6:09 PM
             self.text = soup.find(class_='storytext').text
             # Following code will grab the number of chapters for later use.
-            options = str(soup.select('#chap_select')[0].option)
-            penultimate_chapter = options.split('option value="')[::-1][1]
-            last_chapter = int(penultimate_chapter.split('"')[0]) + 1
-            self.chapters = list(map(str, range(-1, last_chapter + 1)))
+            chapter_list = soup.select('#chap_select')
+            if chapter_list: # There are multiple chapters
+                options = str(chapter_list[0].option)
+                last_chapter_w_extra = options.split('option value="')[-1]
+                last_chapter = int(last_chapter_w_extra.split('"')[0])
+                self.chapters = list(map(str, range(-1, last_chapter + 1)))
+            else:
+                self.chapters = ['-1', '0', '1']
+            self.language = gs.detect(self.text)
             self.initialized = True
             """
              # This code tries to get chapter names, but doesn't always work
@@ -181,6 +204,7 @@ class getStory:
                                     ' div.gr-body >'
                                     ' div > div >'
                                     ' div')[0].text
+            self.language = gs.detect(self.text)
             self.initialized = True
         except Exception as E:
             print('Retrieval of Deviantart story failed: ' + str(E))
@@ -199,6 +223,7 @@ class getStory:
             self.text = soup.find(class_="panel panel-reading")
         elif mode == 'plural':
             self.text = soup.find_all(class_="panel panel-reading")
+        self.language = gs.detect(self.text)
         self.initialized = True
 
     @property
@@ -216,6 +241,7 @@ class getStory:
             with open('PDF2BEREAD.pdf', 'wb') as file:
                 file.write(web_path.read())
             self.url = local_path
+        self.language = gs.detect(self.text)
         self.initialized = True
 
     def pdf(self, page):
@@ -242,12 +268,19 @@ class getStory:
             text = text.encode('ascii', 'ignore')
             text = text.decode('utf-8')
             self.text = str(text)
+        
+        try: # Try to translate the story into the reader's language
+            if self.language != language:
+                self.translate(language)
+        except:
+            pass
+        
         # Formats text to remove odd artifacts from the conversion
-        changes = {
+        self.changes.update({
             '\n': ' ',          '\r': ' ',
             '"': "'",           '.': '. ',
             '.   .   . ': '',   '. . .': '...',
-            "\'": '',           '\"': '',
+            "\'": "'",           '\"': '',
             ':': ': ',          ':  ': ': ',
             '!': '! ',          '!  ': '! ',
             '?': '? ',          '?  ': '? ',
@@ -257,10 +290,10 @@ class getStory:
             '4': '4 ',          '5': '5 ',
             '6': '6 ',          '7': '7 ',
             '8': '8 ',          '9': '9 '
-                  }
+                  })
         if self.speech == 'local':
             # The Microsoft SAPI pronunciation is a bit off
-            updates.update({
+            self.changes.update({
                        'Tali': 'Tahlie',     'tali': 'tahlie',
                        'Yalo': ' Yah-lo ',   'caf ': 'cafe ',
                        'Garrus': 'Gae-rrus', 'Klenon': 'Klenn une',
@@ -269,10 +302,9 @@ class getStory:
                       })
         else:
             # Google's TTS is better at its job :)
-            updates.update({
+            self.changes.update({
                        'Tali': 'Tahhlee', 'tali': 'Tahhlee',
                        'caf ': 'cafe '
                       })
-        changes.update(updates)
-        for original_word, changed_word in changes.items():
+        for original_word, changed_word in self.changes.items():
             self.text = self.text.replace(original_word, changed_word)
