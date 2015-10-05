@@ -1,5 +1,10 @@
-from OmniReader.getStory import getStory
-from OmniReader.utility_functions import say, continue_question
+try:
+    from OmniReader.getStory import getStory
+    from OmniReader.utility_functions import say, continue_question
+except ImportError:
+    from getStory import getStory
+    from utility_functions import say, continue_question
+
 import os
 import sys
 

@@ -1,10 +1,8 @@
-"""
-Special thanks to all the people at CodeReview
-who helped me optimize and improve my code!
-"""
-
 import sys
-from OmniReader.utility_functions import checkup
+try:
+    from OmniReader.utility_functions import checkup
+except ImportError:
+    from utility_functions import checkup
 
 checkup()
 

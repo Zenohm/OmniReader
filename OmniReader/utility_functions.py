@@ -3,12 +3,15 @@ import sys
 import webbrowser
 from gtts import gTTS
 from importlib import import_module
-from OmniReader.__init__ import language
 from platform import python_version
 from subprocess import call
 from textwrap import fill
 home = os.path.expanduser("~")
 
+try:
+    from OmniReader.__init__ import language
+except ImportError:
+    from __init__ import language
 
 def import_or_install(module, package, description, capability):
     """Import module. If it fails to import, prompt user to install

@@ -3,11 +3,18 @@ import PyPDF2
 import unidecode
 from bs4 import BeautifulSoup
 from urllib.request import urlopen
-import OmniReader.translate
-gs = OmniReader.translate.Goslate()
+try:
+    import OmniReader.translate
+    gs = OmniReader.translate.Goslate()
+except ImportError:
+    import translate
+    gs = translate.Goslate()
 
 try:
-    from OmniReader.__init__ import speech_system, language
+    try:
+        from OmniReader.__init__ import speech_system, language
+    except ImportError:
+        from __init__ import speech_system, language
 except ImportError:
     speech_system = 'google'
     language = 'en'
