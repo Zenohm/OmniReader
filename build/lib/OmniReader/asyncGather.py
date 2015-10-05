@@ -1,6 +1,6 @@
 import asyncio
 
-try:
+"""
     def afetch(stories):
         full_text = []
         async def fetch(url):
@@ -14,8 +14,9 @@ try:
         tasks = [asyncio.ensure_future(fetch(url)) for url in stories]
         loop.run_until_complete(asyncio.wait(tasks))
         return full_text
-except SyntaxError:
-    print("No worries, this hasn't been added yet.")
+"""
+
+print("No worries, this hasn't been added yet.")
 
 """
 import asyncio
