@@ -149,6 +149,13 @@ class getStory:
         self.language = gs.detect(self.text)
     
     def translate(self, target='en'):
+        """
+        If the storytext has been gathered gathered and analyzed
+        then translate it from its current detected language
+        into a given target language, usually the reader's native
+        language. By default the target language is English.
+        """
+
         if self.initialized:
             self.source_language = gs.get_languages()[self.language]
             self.target_language = gs.get_languages()[target]
@@ -221,6 +228,10 @@ class getStory:
         Retrieve text from Wattpad stories given a page
         number and a mode type.
         Mode types are singular and plural.
+        Notice: Now that Wattpad uses an authentication system
+            this method no longer works. The only solution will be
+            to require the user to enter a username and password
+            upon entering a Wattpad URL.
         """
         # Sets up the page variable to be added onto the URL
         page = '/page/' + str(page) if page else ''
@@ -248,7 +259,6 @@ class getStory:
             with open('PDF2BEREAD.pdf', 'wb') as file:
                 file.write(web_path.read())
             self.url = local_path
-        self.language = gs.detect(self.text)
         self.initialized = True
 
     def pdf(self, page):
@@ -258,18 +268,20 @@ class getStory:
         # While this works it's a bit odd. More research required.
         page = PyPDF2.PdfFileReader(self.url).getPage(page)
         self.text = page.extractText().replace('\u2122', "'")
+        self.language = gs.detect(self.text)
 
     @property
     def parse(self):
         """
         Removes all unicode characters, nonprintable characters,
         and unneeded special characters.
-        Also formats text for audio reading.
+        This formats the text for audio reading.
         """
         try: # Attempt to scrub the unicode with a library
             text = ftfy.fix_text(self.text)
             self.text = unidecode.unidecode(text).replace('[?]', '')
         except Exception: # If that fails, kill it with fire.
+            print("Nuking the text.")
             text = bytes(self.text, 'utf-8')
             text = text.decode('unicode_escape')
             text = text.encode('ascii', 'ignore')
@@ -313,5 +325,6 @@ class getStory:
                        'Tali': 'Tahhlee', 'tali': 'Tahhlee',
                        'caf ': 'cafe '
                       })
+        # Apply the changes to the text.
         for original_word, changed_word in self.changes.items():
             self.text = self.text.replace(original_word, changed_word)

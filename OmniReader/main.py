@@ -6,7 +6,10 @@ except ImportError:
 
 checkup()
 
-from OmniReader.OmniReader import OmniReader
+try:
+    from OmniReader.OmniReader import OmniReader
+except ImportError:
+    from OmniReader import OmniReader
 
 def main():
     reading = True
