@@ -6,7 +6,7 @@ __license__ = "MIT"
 __date__ = '2015-10-04'
 version_file = os.path.join(os.path.dirname(__file__), 'VERSION')
 with open(version_file) as fh:
-    __version_info__ = fh.read().strip()
+    __version_info__ = eval(fh.read().strip())
 __version__ = '.'.join(str(i) for i in __version_info__)
 __home__ = 'https://github.com/Zenohm/OmniReader'
 __download__ = 'https://github.com/Zenohm/OmniReader/archive/master.zip'
