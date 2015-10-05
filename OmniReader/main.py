@@ -1,8 +1,3 @@
-"""
-Special thanks to all the people at CodeReview
-who helped me optimize and improve my code!
-"""
-
 import sys
 from __init__ import checkup
 
