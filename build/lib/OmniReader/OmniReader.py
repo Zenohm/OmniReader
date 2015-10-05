@@ -30,32 +30,30 @@ def OmniReader(text, *, change_type=False):
         type manually from the command line.
     """
     story = getStory(text)
+    story.text = "No data available."
     if change_type:
         story.type = change_type
     if story.type == 'wattpad':
         if sys.argv[0] and len(sys.argv) == 2:
-            raise SyntaxError(
-                "Please input the number of pages in this story.")
+            error_text = "Page count required for this story."
+            raise SyntaxError(error_text)
         elif sys.argv[0] and len(sys.argv) == 3:
             if sys.argv[2]:
-                number_of_pages = int(sys.argv[2])+1
+                page_count = int(sys.argv[2])+1
         else:
-            number_of_pages = int(
-                input("How many pages are in the story: ")) + 1
+            page_count = int(input("How many pages are in the story: ")) + 1
         # Iterates through the pages of the story
-        for each_page in range(number_of_pages):
-            if each_page:
+        for page in range(page_count):
+            if page:
                 # Designed to cope with Wattpad's weird multi-page system
-                story.wattpad(each_page, 'plural')[1]
+                story.wattpad(page, 'plural')[1]
             else:
                 # Meant for the first page because **** Wattpad
                 story.wattpad()
             paragraphs = story.text.find_all('p')
             # Iterates through the paragraphs in each page of the story
-            for each_paragraph in range(len(paragraphs)):
-                # Get all the text segments
-                paragraphs[each_paragraph] = paragraphs[each_paragraph].text
-            story.text = ' '.join(paragraphs)
+            text = [paragraph.text for paragraph in paragraphs]
+            story.text = ' '.join(text)
             story.parse
             print(story.text)
             say(story.text, speech_system=speech_system, lang=story.language)
@@ -66,9 +64,9 @@ def OmniReader(text, *, change_type=False):
         Iterate through each chapter in a fanfiction
         and save the audio recording of each.
         """
-        story.text = "No data available."
         story.fanfiction
         url = story.url.split('/')
+        # Starts at the first chapter
         for each_chapter in range(int(url[-2]), int(story.chapters[-1]) + 1):
             url = story.url.split('/')
             story.fanfiction
@@ -108,12 +106,10 @@ def OmniReader(text, *, change_type=False):
                 first_page = int(sys.argv[2])-1
         else:
             first_page = int(input("Please enter the beginning page: ")) - 1
-        for each_page in range(
-            first_page,
-            PyPDF2.PdfFileReader(story.url).getNumPages()
-                              ):
-            story.pdf(each_page)
-            print('\n \t \t' + str(each_page + 1) + '\n')
+        last_page = PyPDF2.PdfFileReader(story.url).getNumPages()
+        for page in range(first_page, last_page):
+            story.pdf(page)
+            print('\n \t \t' + str(page + 1) + '\n')
             story.parse
             print(story.text)
             say(story.text, speech_system=speech_system, lang=story.language)
@@ -130,7 +126,11 @@ def OmniReader(text, *, change_type=False):
         return continue_question('finished recording')
 
     elif story.type == 'text':
+        story.initialize
         print('\n' + story.text)
         story.parse
-        say(story.text, speech_system=speech_system, lang=story.language)
+        try:
+            say(story.text, speech_system=speech_system, lang=story.language)
+        except Exception: # The language could not be determined.
+            say(story.text, speech_system=speech_system)
         return continue_question('finished speaking', 'say something else')
