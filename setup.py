@@ -1,8 +1,10 @@
 import os
 
-version_file = os.path.join(os.path.dirname(__file__),'OmniReader', 'VERSION')
+version_file = os.path.join(os.path.dirname(__file__), 'VERSION')
 with open(version_file) as fh:
-    omnireader_version = fh.read().strip()
+    __version_info__ = fh.read().strip()
+omnireader_version = '.'.join(str(i) for i in __version_info__)
+
 
 
 from distutils.core import setup
