@@ -30,7 +30,6 @@ def OmniReader(text, *, change_type=False):
         type manually from the command line.
     """
     story = getStory(text)
-    story.text = "No data available."
     if change_type:
         story.type = change_type
     if story.type == 'wattpad':
@@ -65,6 +64,7 @@ def OmniReader(text, *, change_type=False):
         and save the audio recording of each.
         """
         story.fanfiction
+        story.text = "No data available."
         url = story.url.split('/')
         # Starts at the first chapter
         for each_chapter in range(int(url[-2]), int(story.chapters[-1]) + 1):
