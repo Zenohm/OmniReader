@@ -9,7 +9,10 @@ import os
 import sys
 
 try:
-    from __init__ import speech_system
+    try:
+        from OmniReader.__init__ import speech_system
+    except:
+        from __init__ import speech_system
 except ImportError:
     speech_system = 'google'
 
