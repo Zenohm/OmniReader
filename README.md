@@ -53,7 +53,7 @@ Usage Example
 ---
 
     import OmniReader
-    url = "https://www.fanfiction.net/s/4779466/18/Mass-Effect-Digression"
+    url = "https://www.fanfiction.net/s/11263086/1/Test"
     story = OmniReader.getStory(url)
     story.initialize
     OmniReader.say(story.text) # Opens the default media player and reads the story
