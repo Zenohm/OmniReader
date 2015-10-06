@@ -1,7 +1,7 @@
 import os
 
 version_file = os.path.join(os.path.dirname(__file__), 'OmniReader', 'VERSION.py')
-requirements_fule = os.path.join(os.path.dirname(__file__), 'OmniReader', 'REQUIREMENTS.py')
+requirements_file = os.path.join(os.path.dirname(__file__), 'OmniReader', 'REQUIREMENTS.py')
 with open(version_file) as f:
     __version_info__ = eval(f.read().strip())
 with open(requirements_file) as f:
