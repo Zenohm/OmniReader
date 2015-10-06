@@ -32,6 +32,7 @@ def OmniReader(text, *, change_type=False):
     story = getStory(text)
     if change_type:
         story.type = change_type
+    
     if story.type == 'wattpad':
         if sys.argv[0] and len(sys.argv) == 2:
             error_text = "Page count required for this story."
@@ -40,7 +41,8 @@ def OmniReader(text, *, change_type=False):
             if sys.argv[2]:
                 page_count = int(sys.argv[2])+1
         else:
-            page_count = int(input("How many pages are in the story: ")) + 1
+            page_count = input("How many pages are in the story: ")
+            page_count = int(page_count) + 1
         # Iterates through the pages of the story
         for page in range(page_count):
             if page:
@@ -64,50 +66,41 @@ def OmniReader(text, *, change_type=False):
         and save the audio recording of each.
         """
         story.fanfiction
-        story.text = "No data available."
         url = story.url.split('/')
         # Starts at the first chapter
         for each_chapter in range(int(url[-2]), int(story.chapters[-1]) + 1):
             url = story.url.split('/')
             story.fanfiction
             # Set up the name for each audio recording
-            title = url[-1] + '_' + url[-2]
-            if not os.path.exists(url[-1]):
-                os.makedirs(url[-1])
-            print("Processing story text...")
+            title = url[-1] + " Chapter " + url[-2]
+            # if not os.path.exists(url[-1]):
+            #     os.makedirs(url[-1])
+            # print("Processing story text...")
             story.parse
-            print("Downloading audio file, " + title)
-            if speech_system == 'local':
-                say(story.text,
-                    url[-1] +
-                    '\\' +
-                    str(int(story.chapters[each_chapter]) + 1),
-                    speech_system,
-                    False)
-            else:
-                say(story.text,
-                    url[-1] +
-                    '\\' +
-                    str(int(story.chapters[each_chapter]) + 1),
-                    speech_system,
-                    False)
+            print("Downloading: " + title)
+            current_chapter = int(story.chapters[each_chapter]) + 1
+            say(story.text, 
+                url[-1] + '\\' + str(current_chapter),
+                speech_system, False)
             # Iterate to the next chapter and reset the URL
             url[-2] = str(int(url[-2]) + 1)
-            print("Continuing to next chapter...")
+            # print("Continuing to next chapter...")
             story.url = '/'.join(url)
         return continue_question('finished recording')
 
     elif story.type == 'pdf':
         story.pdf_initialize
+        request = "Enter the beginning page"
         if sys.argv[0] and len(sys.argv) == 2:
-            raise SyntaxError("Please input the beginning page.")
+            raise SyntaxError(request + '.')
         elif sys.argv[0] and len(sys.argv) == 3:
             if sys.argv[2]:
                 first_page = int(sys.argv[2])-1
         else:
-            first_page = int(input("Please enter the beginning page: ")) - 1
+            first_page = int(input(request + ": ")) - 1
         last_page = PyPDF2.PdfFileReader(story.url).getNumPages()
         for page in range(first_page, last_page):
+            # There's some weird shit going on here.
             story.pdf(page)
             print('\n \t \t' + str(page + 1) + '\n')
             story.parse
@@ -119,9 +112,9 @@ def OmniReader(text, *, change_type=False):
         story.deviantart
         url = story.url.split('/')
         title = url[-1]
-        print("Processing story text...")
+        # print("Processing story text...")
         story.parse
-        print("Creating audio file.")
+        print("Downloading: " + title)
         say(story.text, title, speech_system, lang=story.language)
         return continue_question('finished recording')
 
