@@ -1,4 +1,22 @@
 import sys
+import webbrowser
+
+class HumorousError(Exception):
+    pass
+
+try:
+    say("Initializing...", lang=language)
+except Exception:
+    global speech_system
+    speech_system = 'local'
+    try:
+        say("Initializing...", speech_system=speech_system, lang=language)
+    except Exception:
+        speech_system = None
+        # I'm leaving this here. It's a fun easter egg, something
+        # you don't expect to find when nothing works.
+        webbrowser.open_new('https://www.youtube.com/watch?v=WlBiLNN1NhQ')
+        raise HumorousError("Life's a piece of shit.")
 
 try:
     from OmniReader.OmniReader import OmniReader
