@@ -1,6 +1,15 @@
 import sys
 import webbrowser
 
+try:
+    from OmniReader.utility_functions import say
+    from OmniReader.__init__ import language
+except ImportError:
+    from utility_functions import say
+    from __init__ import language
+
+
+
 class HumorousError(Exception):
     pass
 
