@@ -2,6 +2,10 @@ OmniReader
 ===
 This program will gather text from the inputted source, parse it, and output an audio version of that text using either Google's text-to-speech engine or a local text-to-speech solution.
 
+All stories will be stored in the current home directory, for example:
+
+    C:/Users/<Username>/
+
 Install
 ---
 
