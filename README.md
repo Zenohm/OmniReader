@@ -52,10 +52,10 @@ The `getStory` class can be passed a valid URL or text segment, or list of eithe
 Usage Example
 ---
 
-  import OmniReader
-  url = "https://www.fanfiction.net/s/4779466/18/Mass-Effect-Digression"
-  story = OmniReader.getStory(url)
-  story.initialize
-  OmniReader.say(story.text) # Opens the default media player and reads the story
-  OmniReader.translate('es') # Translate to Spanish
-  OmniReader.say(story.text) # Opens the default media player and reads the story in Spanish
+    import OmniReader
+    url = "https://www.fanfiction.net/s/4779466/18/Mass-Effect-Digression"
+    story = OmniReader.getStory(url)
+    story.initialize
+    OmniReader.say(story.text) # Opens the default media player and reads the story
+    OmniReader.translate('es') # Translate to Spanish
+    OmniReader.say(story.text) # Opens the default media player and reads the story in Spanish
