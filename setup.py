@@ -30,7 +30,7 @@ using a TTS engine.  OmniReader requires Python 3.3+.""",
     author = "Isaac Smith (Zenohm)",
     author_email = "sentherus@gmail.com",
     classifiers = [
-    'Development Status :: 3 - Alpha',
+    'Development Status :: 4 - Beta',
     'Intended Audience :: Other Audience',
     'Intended Audience :: Education',
     'Intended Audience :: Developers',
