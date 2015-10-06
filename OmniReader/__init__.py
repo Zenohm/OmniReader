@@ -4,7 +4,7 @@ __email__ = 'sentherus@gmail.com'
 __copyright__ = '2015 sentherus@gmail.com'
 __license__ = "MIT"
 __date__ = '2015-10-04'
-version_file = os.path.join(os.path.dirname(__file__), 'VERSION.txt')
+version_file = os.path.join(os.path.dirname(__file__), 'VERSION.py')
 with open(version_file) as fh:
     __version_info__ = eval(fh.read().strip())
 __version__ = '.'.join(str(i) for i in __version_info__)
