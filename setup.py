@@ -1,6 +1,6 @@
 import os
 
-version_file = os.path.join(os.path.dirname(__file__), 'OmniReader', 'VERSION.txt')
+version_file = os.path.join(os.path.dirname(__file__), 'OmniReader', 'VERSION.py')
 with open(version_file) as fh:
     __version_info__ = eval(fh.read().strip())
 omnireader_version = '.'.join(str(i) for i in __version_info__)
