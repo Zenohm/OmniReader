@@ -1,8 +1,12 @@
 import os
 
 version_file = os.path.join(os.path.dirname(__file__), 'OmniReader', 'VERSION.py')
-with open(version_file) as fh:
-    __version_info__ = eval(fh.read().strip())
+requirements_fule = os.path.join(os.path.dirname(__file__), 'OmniReader', 'REQUIREMENTS.py')
+with open(version_file) as f:
+    __version_info__ = eval(f.read().strip())
+with open(requirements_file) as f:
+    required = f.read().splitlines()
+
 omnireader_version = '.'.join(str(i) for i in __version_info__)
 
 
@@ -41,4 +45,5 @@ using a TTS engine.  OmniReader requires Python 3.3+.""",
     'Topic :: Multimedia :: Sound/Audio :: Speech',
     ],
     packages = ['OmniReader'],
+    install_requires=required,
     )
