@@ -8,11 +8,9 @@ from subprocess import call
 from textwrap import fill
 home = os.path.expanduser("~")
 
+speech_system = 'google'
+language = 'en'
 
-try:
-    from OmniReader.__init__ import language
-except ImportError:
-    from __init__ import language
 
 def continue_question(intro_text='reached the end',
                       end_text='start another story'):

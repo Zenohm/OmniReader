@@ -3,24 +3,25 @@ import PyPDF2
 import unidecode
 from bs4 import BeautifulSoup
 from urllib.request import urlopen
-try:
-    import OmniReader.translate
-    gs = OmniReader.translate.Goslate()
-except ImportError:
-    import translate
-    gs = translate.Goslate()
+from goslate import Goslate
+from mercury_api import ParserAPI
+import html2text
+import os
 
-try:
-    try:
-        from OmniReader.__init__ import speech_system, language
-    except ImportError:
-        from __init__ import speech_system, language
-except ImportError:
-    speech_system = 'google'
-    language = 'en'
+html_parser = html2text.HTML2Text()
+html_parser.ignore_links = True
+html_parser.ignore_images = True
+html_parser.body_width = 0
+
+mercury = ParserAPI(api_key='p5XXJvAPT7AtTyi6zuPAHRVk2RaX8z7lxJaNiERz')
+
+gs = Goslate()
+
+speech_system = 'google'
+language = 'en'
 
 
-class getStory:
+class Story:
     """
     This class handles the retrieval and classification
     of text from the various websites or formats.
@@ -62,7 +63,7 @@ class getStory:
         self.chapters = []
         self.initialized = False
         self.changes = {}
-        self.language = "Unknown"
+        self.language = language
         if not hasattr(self.url, '__iter__') or type(self.url) is str:
             if 'wattpad' in self.url:
                 self.type = 'wattpad'
@@ -84,7 +85,7 @@ class getStory:
         else:
             self.type = 'iterable'
             self.backup = self.url
-            map_class = [getStory(each_url) for each_url in self.url]
+            map_class = [Story(each_url) for each_url in self.url]
             self.url = map_class
     
     def __repr__(self):
@@ -128,7 +129,6 @@ class getStory:
     def __len__(self):
         return len(self.text)
     
-    @property
     def initialize(self):
         """
         Automatically detects and initializes the
@@ -138,15 +138,16 @@ class getStory:
         if self.type == 'wattpad':
             self.wattpad()
         elif self.type == 'fanfiction':
-            self.fanfiction
+            self.fanfiction()
         elif self.type == 'deviantart':
-            self.deviantart
+            self.deviantart()
         elif self.type == 'pdf':
-            self.pdf_initialize
+            self.pdf_initialize()
         else:
+            if self.pathtype == 'url':
+                self.text = html_parser.handle(mercury.parse(self.url).content)
             self.initialized = True
-            pass
-        self.language = gs.detect(self.text)
+        #self.language = gs.detect(self.text)
     
     def translate(self, target='en'):
         """
@@ -157,15 +158,15 @@ class getStory:
         """
 
         if self.initialized:
-            self.source_language = gs.get_languages()[self.language]
-            self.target_language = gs.get_languages()[target]
-            print("Translating from {0} to {1}.".format(self.source_language, self.target_language))
-            self.text = gs.translate(self.text, target)
-            self.language = target
+            # self.source_language = gs.get_languages()[self.language]
+            # self.target_language = gs.get_languages()[target]
+            # print("Translating from {0} to {1}.".format(self.source_language, self.target_language))
+            # self.text = gs.translate(self.text, target)
+            # self.language = target
+            pass
         else:
             print("Please initialize.")
     
-    @property
     def fanfiction(self):
         """
         Retrieves and parses text from a Fanfiction.net story.
@@ -188,7 +189,7 @@ class getStory:
                 self.chapters = list(map(str, range(-1, last_chapter + 1)))
             else:
                 self.chapters = ['-1', '0', '1']
-            self.language = gs.detect(self.text)
+            # self.language = gs.detect(self.text)
             self.initialized = True
             """
              # This code tries to get chapter names, but doesn't always work
@@ -206,7 +207,6 @@ class getStory:
         except Exception as E:
             print('Retrieval of Fanfiction story failed: ' + str(E))
 
-    @property
     def deviantart(self):
         """
         Retrieves text from Deviantart stories.
@@ -218,7 +218,7 @@ class getStory:
                                     ' div.gr-body >'
                                     ' div > div >'
                                     ' div')[0].text
-            self.language = gs.detect(self.text)
+            # self.language = gs.detect(self.text)
             self.initialized = True
         except Exception as E:
             print('Retrieval of Deviantart story failed: ' + str(E))
@@ -241,10 +241,10 @@ class getStory:
             self.text = soup.find(class_="panel panel-reading")
         elif mode == 'plural':
             self.text = soup.find_all(class_="panel panel-reading")
-        self.language = gs.detect(self.text)
+        # self.language = gs.detect(self.text)
         self.initialized = True
 
-    @property
+    
     def pdf_initialize(self):
         """
         Sets up the retrieval of text from a PDF,
@@ -268,9 +268,8 @@ class getStory:
         # While this works it's a bit odd. More research required.
         page = PyPDF2.PdfFileReader(self.url).getPage(page)
         self.text = page.extractText().replace('\u2122', "'")
-        self.language = gs.detect(self.text)
+        # self.language = gs.detect(self.text)
 
-    @property
     def parse(self):
         """
         Removes all unicode characters, nonprintable characters,
@@ -288,11 +287,11 @@ class getStory:
             text = text.decode('utf-8')
             self.text = str(text)
         
-        try: # Try to translate the story into the reader's language
-            if self.language != language:
-                self.translate(language)
-        except:
-            pass
+        # try: # Try to translate the story into the reader's language
+        #     if self.language != language:
+        #         # self.translate(language)
+        # except:
+        #     pass
         
         # Formats text to remove odd artifacts from the conversion
         self.changes.update({
