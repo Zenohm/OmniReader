@@ -20,7 +20,8 @@ or
 Supported Websites
 ---
 
-At the moment this program has only a few supported websites:
+This program supports most websites on the internet.
+At the moment this program has specific behavior for a few formats and websites:
   - Fanfiction.net
   - Wattpad - In Progress after recent update
   - Deviantart
