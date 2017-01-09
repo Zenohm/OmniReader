@@ -76,5 +76,6 @@ Usage Example
     story = OmniReader.getStory(url)
     story.initialize
     OmniReader.say(story.text) # Opens the default media player and reads the story
-    story.translate('es') # Translate to Spanish
-    OmniReader.say(story.text) # Opens the default media player and reads the story in Spanish
+    # The following code is currently unavailable due to recent changes.
+    # story.translate('es') # Translate to Spanish
+    # OmniReader.say(story.text) # Opens the default media player and reads the story in Spanish
